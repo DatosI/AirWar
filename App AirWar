@@ -1,0 +1,226 @@
+package com.example.yenma.airwar;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.List;
+
+public abstract class MainActivity extends AppCompatActivity implements SensorEventListener {
+    /**
+     * control
+     */
+    TextView texto;
+    private SensorManager mSensorManager;
+    private Sensor mSensor;
+
+    /**
+     * Puerto
+     * */
+    private static final int SERVERPORT = 5000;
+    /**
+     * HOST
+     * */
+    private static final String ADDRESS = "192.168.1.3";
+
+
+    private GoogleApiClient client;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+
+
+        texto = (TextView) findViewById(R.id.texto);
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+         mSensor= mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
+        List<Sensor> mList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+        for (int i=1; i < mList.size(); i++) {
+            texto.append("\n" + mList.get(i).getName() + "\n" + mList.get(i).getVendor() + "\n" + mList.get(i).getVersion());
+        }
+    }
+
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+
+    }
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+//////////////////////////////////////////////////////////////////////////
+        float x, y, z;
+        x = event.values[0];
+        y = event.values[1];
+        z = event.values[2];
+        texto.append("\n" + "El valor de x:" + x + "\n" + "El valor de y:" + y + "\n" + "El valor de z:" + z );
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+    /**
+     * Clase para interactuar con el servidor
+     * */
+    class MyATaskCliente extends AsyncTask<String,Void,String> {
+
+        /**
+         * Ventana que bloqueara la pantalla del movil hasta recibir respuesta del servidor
+         * */
+        ProgressDialog progressDialog;
+
+        /**
+         * muestra una ventana emergente
+         * */
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setTitle("Connecting to server");
+            progressDialog.setMessage("Please wait...");
+            progressDialog.show();
+        }
+
+        /**
+         * Se conecta al servidor y trata resultado
+         * */
+        @Override
+        protected String doInBackground(String... onSensorChanged){
+
+            try {
+                //Se conecta al servidor
+                InetAddress serverAddr = InetAddress.getByName(ADDRESS);
+                Log.i("I/TCP Client", "Connecting...");
+                Socket socket = new Socket(serverAddr, SERVERPORT);
+                Log.i("I/TCP Client", "Connected to server");
+
+                //envia peticion de cliente
+                Log.i("I/TCP Client", "Send data to server");
+                PrintStream output = new PrintStream(socket.getOutputStream());
+                String[] request = onSensorChanged ;
+                output.println(request);
+
+                //recibe respuesta del servidor
+                Log.i("I/TCP Client", "Received data to server");
+                InputStream stream = socket.getInputStream();
+                byte[] lenBytes = new byte[256];
+                stream.read(lenBytes,0,256);
+                String received = new String(lenBytes,"UTF-8").trim();
+                Log.i("I/TCP Client", "Received " + received);
+                Log.i("I/TCP Client", "");
+                //cierra conexion
+                socket.close();
+                return received;
+            }catch (UnknownHostException ex) {
+                Log.e("E/TCP Client", "" + ex.getMessage());
+                return ex.getMessage();
+            } catch (IOException ex) {
+                Log.e("E/TCP Client", "" + ex.getMessage());
+                return ex.getMessage();
+            }
+        }
+
+        /**
+         * Oculta ventana emergente y muestra resultado en pantalla
+         * */
+        @Override
+        protected void onPostExecute(String value){
+            progressDialog.dismiss();
+            texto.setText(value);
+        }
+    }
+
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
+
+}
