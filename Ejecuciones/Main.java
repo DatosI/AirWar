@@ -9,13 +9,22 @@ import Ventanas.Interfaz_Opciones;
 import Ventanas.Interfaz_Records;
 import Ventanas.NewJPanel;
 import Ventanas.VentanaJuego;
+import enemy.test.ColaEnemigos;
+
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
+
+
+
 public class Main {
     
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, InterruptedException {
             
+            
+            new Partida().run();
+         /*   
             Interfaz VentanaPrincipal = new Interfaz();
             Interfaz_Opciones VentanaOpciones = new Interfaz_Opciones(VentanaPrincipal);
             Interfaz_Records VentanaRecords = new Interfaz_Records(VentanaPrincipal);
@@ -23,11 +32,15 @@ public class Main {
             VentanaJuego Juego = new VentanaJuego("nombre");
             MainServer Servidor= new  MainServer();
             
-    
+           
+            VentanaRecords.Records();
+            
             VentanaPrincipal.setVisible(true);
             //new NewJPanel().setVisible(true);
-           
-            while(true){
+            ColaEnemigos cola=new ColaEnemigos();
+           // cola.filled();
+            
+            while(Juego.isEstado()){
                 VentanaPrincipal.setEstado(true);
                
                 
@@ -60,8 +73,11 @@ public class Main {
                      
                     Juego.run();
                 }
+            Juego.setEstado(true);
    
             }
+
+*/
         }   
    
 }

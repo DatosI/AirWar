@@ -17,12 +17,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-
-
 public class Partida {
-    
-    
-    
+  
     public void run()throws IOException, InterruptedException {
         Interfaz VentanaPrincipal = new Interfaz();
             Interfaz_Opciones VentanaOpciones = new Interfaz_Opciones(VentanaPrincipal);
@@ -30,7 +26,6 @@ public class Partida {
             Interfaz_Juego VentanaNombre = new  Interfaz_Juego();
             VentanaJuego Juego = new VentanaJuego("nombre");
             MainServer Servidor= new  MainServer();
-            
            
             VentanaRecords.Records();
             
@@ -41,8 +36,7 @@ public class Partida {
             
             while(Juego.isEstado()){
                 VentanaPrincipal.setEstado(true);
-               
-                
+                               
                 while(VentanaPrincipal.isEstado()){
                     VentanaNombre.setVisible(false);
                     
@@ -66,6 +60,9 @@ public class Partida {
                     VentanaNombre.setVisible(true);
                 }
                 if (VentanaNombre.isEstado2()){
+                    Juego.setNombre(VentanaNombre.getNombre());
+                    
+                    VentanaRecords.Records();        
                     
                         
                     //Juego.setNombre(VentanaNombre.getNombre());

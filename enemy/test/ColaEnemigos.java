@@ -5,22 +5,25 @@ import enemy.test.Boss;
 import enemy.test.EnemyTest;
 import java.util.Random;
 
-public class ColaEnemigos{
+
+public class ColaEnemigos{  
     public EnemyTest[] Enemigos;
     public int level;
     public int current;
     private Object[] enemy;
+   
 /*
     public ColaEnemigos() {
         throw new RuntimeException("Uncompilable source code - Erroneous sym type: enemy.test.EnemyTest.<init>");
     }
-*/
+  */  
+
     public void filled() throws InterruptedException {
         Random random = new Random();
         int i = 0;
 
         while(i != 20) {
-            
+            System.out.print("SS");
             int a = random.nextInt(5);
             if(a == 0) {
                 this.Enemigos[i] = new EnemyTest(1, 3, 3, "Jet.png");
@@ -36,7 +39,7 @@ public class ColaEnemigos{
             } else {
                 this.Enemigos[i] = new EnemyTest(4, 1, 4, "Kamikaze.png");
             }
-            
+        i++;    
         }
 /*
         if(this.level == 0) {
@@ -62,9 +65,9 @@ public class ColaEnemigos{
         } else {
             this.Enemigos[i] = new Boss(5, 50, "FinalBoss.png");
         }
-*/
+
     }
-/*
+
     public void delete() {
         int i = 0;
         if(this.Enemigos[i].GetLife() == 0) {

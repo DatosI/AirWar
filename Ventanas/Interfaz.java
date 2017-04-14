@@ -41,8 +41,7 @@ public class Interfaz extends javax.swing.JFrame {
      */
     public Interfaz() {
         initComponents();
-        this.setLocationRelativeTo(null);       /*para que aparescan al centro*/
-        
+        this.setLocationRelativeTo(null);                                       //para que aparescan al centro
     }
     
     public Image getIconImage(){

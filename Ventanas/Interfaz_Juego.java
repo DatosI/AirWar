@@ -110,9 +110,6 @@ public class Interfaz_Juego extends javax.swing.JFrame {
 
     private void JugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JugarActionPerformed
         nombre=Nombre.getText();
-        
-     
-        
         this.setEstado(false);
         this.setVisible(false);
       

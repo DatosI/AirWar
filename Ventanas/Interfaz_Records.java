@@ -1,22 +1,28 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Ventanas;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 
 
-/**
- *
- * @author emers
- */
 public class Interfaz_Records extends javax.swing.JFrame {
 
     private final Interfaz VentanaPrincipal;
+    public String texto;
+
+    public String getTexto() {
+        return texto;
+    }
+
+    public void setTexto(String texto) {
+        this.texto = texto;
+    }
     /**
      * Creates new form Interfaz
      */
@@ -24,6 +30,7 @@ public class Interfaz_Records extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.VentanaPrincipal=VentanaPrincipal;
+        
     }
     
     public Image getIconImage(){
@@ -42,11 +49,14 @@ public class Interfaz_Records extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTextField1 = new javax.swing.JTextField();
         Titulo = new javax.swing.JLabel();
         Boton_Volver = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jLabel2 = new javax.swing.JLabel();
+        espacio = new javax.swing.JTextArea();
         JLabelFondo = new javax.swing.JLabel();
+
+        jTextField1.setText("jTextField1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setIconImage(getIconImage());
@@ -70,10 +80,15 @@ public class Interfaz_Records extends javax.swing.JFrame {
         });
         getContentPane().add(Boton_Volver, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 10, 90, 40));
 
-        jScrollPane2.setViewportView(jLabel2);
+        espacio.setColumns(20);
+        espacio.setRows(5);
+        espacio.setText("records");
+        jScrollPane2.setViewportView(espacio);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(192, 202, 610, 230));
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 240, 600, 170));
 
+        JLabelFondo.setFont(new java.awt.Font("Tahoma", 3, 14)); // NOI18N
+        JLabelFondo.setForeground(new java.awt.Color(204, 204, 204));
         JLabelFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/oiLHQw (1).jpg"))); // NOI18N
         JLabelFondo.setText("jLabel1");
         getContentPane().add(JLabelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(-40, 0, 1040, 530));
@@ -85,14 +100,33 @@ public class Interfaz_Records extends javax.swing.JFrame {
         VentanaPrincipal.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_Boton_VolverActionPerformed
-
+    
+    public void Records() throws FileNotFoundException, IOException{
+        
+        try{
+            
+            FileReader lector=new FileReader("C:\\Users\\emers\\Desktop\\fondos\\texto.txt");
+            BufferedReader contenido=new BufferedReader(lector);
+            while((texto=contenido.readLine())!=null){
+               //System.out.println(texto);
+               espacio.setText(texto);
+            }
+    
+        }
+        catch(Exception e){
+            System.out.println("Error al leer");
+        }
+   
+    
+    }
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Boton_Volver;
     private javax.swing.JLabel JLabelFondo;
     private javax.swing.JLabel Titulo;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JTextArea espacio;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }
